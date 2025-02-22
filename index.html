@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>时空回廊 - 解谜RPG</title>
+    <style>
+        body {
+            font-family: '微软雅黑', sans-serif;
+            background: #2c3e50;
+            color: #ecf0f1;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .scene {
+            background: #34495e;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+        }
+        button {
+            background: #3498db;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .inventory {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #34495e;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        #musicToggle {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <audio id="bgm" loop>
+        <source src="https://cdn.pixabay.com/audio/2023/03/27/audio_6a5c0d9d28.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="inventory">
+        <h3>物品栏</h3>
+        <div id="items"></div>
+    </div>
+
+    <div id="scene1" class="scene">
+        <h2>第一章：神秘邀请</h2>
+        <p>深夜，你收到已故祖父寄来的信："若见此信，速来老宅。真相都在那个铜盒里..."</p>
+        <p>推开尘封的大门，月光透过彩窗在地上投射出奇怪的符号...</p>
+        <button onclick="showScene(2)">检查地上的符号</button>
+        <button onclick="addItem('老钥匙')">查看门边的抽屉</button>
+    </div>
+
+    <div id="scene2" class="scene">
+        <h2>符号之谜</h2>
+        <p>地面上排列着七个汉字：生、死、时、空、门、钥、心</p>
+        <p>墙上有模糊提示：以始为终 以终为始</p>
+        <input type="text" id="puzzle1" placeholder="请输入正确排列">
+        <button onclick="checkPuzzle(1)">确认</button>
+    </div>
+
+    <div id="scene3" class="scene">
+        <h2>图书馆谜影</h2>
+        <p>书架后传来啜泣声，一个半透明的小女孩正在找书："哥哥能帮我算算吗？"</p>
+        <p>"爸爸说把年龄加130再开平方，就是弟弟现在的年龄..."</p>
+        <input type="number" id="puzzle2">
+        <button onclick="checkPuzzle(2)">回答</button>
+    </div>
+
+    <div id="ending" class="scene">
+        <h2>真相大白</h2>
+        <p>铜盒打开，泛黄的照片飘落：1943年，祖父与年轻时的自己合影...</p>
+        <p>原来时空回廊的守护者，正是不同时间线的自己...</p>
+        <button onclick="resetGame()">重新开始</button>
+    </div>
+
+    <button id="musicToggle" onclick="toggleMusic()">🎵 关闭音乐</button>
+
+    <script>
+        let musicOn = true;
+        const bgm = document.getElementById('bgm');
+        
+        function toggleMusic() {
+            musicOn = !musicOn;
+            document.getElementById('musicToggle').textContent = musicOn ? '🎵 关闭音乐' : '🎵 开启音乐';
+            musicOn ? bgm.play() : bgm.pause();
+        }
+
+        function showScene(sceneId) {
+            document.querySelectorAll('.scene').forEach(s => s.style.display = 'none');
+            document.getElementById(`scene${sceneId}`).style.display = 'block';
+        }
+
+        function addItem(item) {
+            if(!document.getElementById(item)) {
+                const div = document.createElement('div');
+                div.id = item;
+                div.textContent = item;
+                document.getElementById('items').appendChild(div);
+            }
+        }
+
+        function checkPuzzle(type) {
+            if(type === 1) {
+                const answer = document.getElementById('puzzle1').value;
+                if(answer === '门钥时生死空') {
+                    showScene(3);
+                } else {
+                    alert('符号发出红光...');
+                }
+            } else if(type === 2) {
+                const age = parseInt(document.getElementById('puzzle2').value);
+                if(age === 14) { // (x+130)的平方根是整数 → x=14
+                    showScene('ending');
+                } else {
+                    alert('小女孩的哭声更大了...');
+                }
+            }
+        }
+
+        function resetGame() {
+            document.getElementById('items').innerHTML = '';
+            showScene(1);
+        }
+
+        // 初始化游戏
+        showScene(1);
+        bgm.play();
+    </script>
+</body>
+</html>
